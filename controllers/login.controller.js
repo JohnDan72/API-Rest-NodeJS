@@ -2,6 +2,7 @@ const { request, response } = require("express");
 const bcryptjs = require("bcryptjs");
 const Usuario = require("../models/usuario");
 const { generarJWT } = require("../helpers/generarJWT");
+const { validaGoogle } = require("../helpers/google-verify");
 
 const loginUser = async(req= request, resp = response) => {
     try{
@@ -39,4 +40,25 @@ const loginUser = async(req= request, resp = response) => {
     
 }
 
-module.exports = { loginUser }
+const loginToken = async(req = request, res = response) => {
+    let {id_token} = req.body
+
+    try{
+        let googleUser = await validaGoogle(id_token);
+
+        console.log(googleUser);
+        
+        res.status(200).json({
+            msg: 'Token llegado', 
+            googleUser           
+        })
+    }catch(error){
+        res.status(500).json({
+            msg: 'Error inesperado',
+            error
+        })
+    }
+    
+}
+
+module.exports = { loginUser, loginToken }
