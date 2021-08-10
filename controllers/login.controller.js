@@ -40,17 +40,38 @@ const loginUser = async(req= request, resp = response) => {
     
 }
 
-const loginToken = async(req = request, res = response) => {
+const googleLogin = async(req = request, res = response) => {
     let {id_token} = req.body
 
     try{
-        let googleUser = await validaGoogle(id_token);
+        // let googleUser = await validaGoogle(id_token);
+        const { correo, nombre, img} = await validaGoogle(id_token);
 
-        console.log(googleUser);
+        let usuario = await Usuario.findOne({ correo });
+
+        if(!usuario){ //tengo que crear usuario
+            const data = {
+                nombre,
+                correo,
+                password: ':P', //no es necesario una password
+                img,
+                google: true
+            };
+            usuario = new Usuario( data );
+            await usuario.save();
+        }
+
+        // console.log(googleUser);
+        // si el usuario en DB
+        if(!usuario.estado){
+            return res.status(401).json({
+                error_msg: 'El usuario esta bloquedao'
+            })
+        }
         
         res.status(200).json({
             msg: 'Token llegado', 
-            googleUser           
+            usuario           
         })
     }catch(error){
         res.status(500).json({
@@ -61,4 +82,4 @@ const loginToken = async(req = request, res = response) => {
     
 }
 
-module.exports = { loginUser, loginToken }
+module.exports = { loginUser, googleLogin }

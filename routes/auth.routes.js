@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { loginUser, loginToken } = require("../controllers/login.controller");
+const { loginUser, googleLogin } = require("../controllers/login.controller");
 const { checarEmailExisteLogin } = require("../helpers/db-validators");
 const { validaJWT } = require("../middlewares/validar-jwt");
 const { validarCampos } = require("../middlewares/validarCampos");
@@ -17,6 +17,6 @@ const   router = Router();
         router.post('/google',[
             check('id_token', 'Token es obligatorio').not().isEmpty(),
             validarCampos
-        ], loginToken);
+        ], googleLogin);
 
 module.exports = {router};
