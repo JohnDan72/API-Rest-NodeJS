@@ -6,8 +6,15 @@ class Server {
   constructor() {
     this.app = express();
     this.port = process.env.PORT;
-    this.usuariosPath = '/api/usuarios';
-    this.authPath = '/api/auth';
+
+    this.path = {
+      authPath:       '/api/auth',
+      categoriasPath: '/api/categorias',
+      usuariosPath:   '/api/usuarios'
+    }
+    // this.usuariosPath = '/api/usuarios';
+    // this.authPath = '/api/auth';
+    // this.categoriasPath = '/api/categorias';
     
     //Conectar a base de datos mongo
     this.conectarMongo();
@@ -31,8 +38,9 @@ class Server {
     
   }
   routes() {
-    this.app.use(this.authPath, require('../routes/auth.routes').router)
-    this.app.use(this.usuariosPath, require('../routes/usuarios.routes').router)
+    this.app.use(this.path.authPath, require('../routes/auth.routes').router);
+    this.app.use(this.path.usuariosPath, require('../routes/usuarios.routes').router);
+    this.app.use(this.path.categoriasPath, require('../routes/categorias.routes').router);
   }
 
   listen() {
