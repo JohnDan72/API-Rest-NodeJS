@@ -12,7 +12,7 @@ const getCategorias = async(req = request, res = response) => {
 
         const [categories, total] = await Promise.all([
             Categoria.find({ estado: true })
-            .populate('usuario')
+            .populate('usuario',['nombre','correo'])
             .skip(parseInt(limit * page))
             .limit(parseInt(limit)),
             Categoria.countDocuments({ estado: true })
@@ -36,9 +36,13 @@ const getCategorias = async(req = request, res = response) => {
 /**my task from Udemy:
  * populate de mongoose
  */
-const getCategoriaById = (req = request, res = response) => {
+const getCategoriaById = async (req = request, res = response) => {
+    const { id_cat } = req.params;
+    const categoria = await Categoria.findOne({_id:id_cat}).populate('usuario',['nombre','correo']);
+
     res.status(201).json({
-        msg: "get categoria by id"
+        msg: "get categoria by id",
+        categoria
     })
 }
 
@@ -84,9 +88,19 @@ const crearCategoria = async(req = request, res = response) => {
  * recibe nombre
  * no se repite nombre
  */
-const updateCategoria = (req = request, res = response) => {
+const updateCategoria = async (req = request, res = response) => {
+    const {id_cat} = req.params;
+    let { nombre } = req.body;
+    nombre = nombre.toUpperCase();
+    const userId = req.usuario_solicitante._id;
+
+    const catUpdated = await Categoria.findByIdAndUpdate(id_cat,{
+        nombre,
+        usuario:userId
+    })
     res.status(201).json({
-        msg: "update categoria"
+        msg: "update categoria",
+        catUpdated
     })
 }
 
@@ -95,9 +109,16 @@ const updateCategoria = (req = request, res = response) => {
  * cambiar estado a false
  * token de user admin
  */
-const deleteCategoria = (req = request, res = response) => {
+const deleteCategoria = async (req = request, res = response) => {
+
+    const { id_cat } = req.params;
+
+    const catDeleted = await Categoria.findByIdAndUpdate(id_cat,{
+        estado: false
+    })
     res.status(201).json({
-        msg: "delete categoria"
+        msg: "delete categoria",
+        catDeleted
     })
 }
 
