@@ -4,6 +4,7 @@ const CategoriaSchema = Schema({
     nombre: {
         type: String,
         required: [true, 'El nombre es obligatorio'],
+        unique: true
     },
     estado: {
         type: Boolean,
@@ -12,10 +13,9 @@ const CategoriaSchema = Schema({
     },
     usuario: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario',
+        ref: 'Usuarios',
         required: [true, 'Foreign key error']
     },
 });
 
 module.exports = model('Categoria', CategoriaSchema);
-
