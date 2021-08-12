@@ -83,6 +83,14 @@ const existeProducto = async (id_cat) => {
 }
 
 
+// Validar colecciones permitidas
+const checarColecciones = ( coleccion , colecPermitidas ) => {
+    if(!colecPermitidas.includes(coleccion)){
+        throw new Error(`Coleccion no permitida. Permitidas: ${colecPermitidas}`);
+    }
+    return true;
+}
+
 module.exports = {  checarRoleValido,
                      checarEmailExiste,
                      checarEmailExisteLogin,
@@ -92,4 +100,5 @@ module.exports = {  checarRoleValido,
                      existeCategoriaByName,
                      validaCategoria,
                      existeNombreProd,
-                     existeProducto }
+                     existeProducto,
+                     checarColecciones }
